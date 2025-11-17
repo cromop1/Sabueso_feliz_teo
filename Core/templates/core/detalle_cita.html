@@ -1,0 +1,148 @@
+{% extends "core/base.html" %}
+
+{% block title %}Detalle de Cita{% endblock %}
+
+{% block main_class %}px-4 sm:px-6 lg:px-8 py-16{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-8">
+    <!-- Hero -->
+    <section class="rounded-[32px] bg-gradient-to-br from-[#7A3AFF] via-[#8D4DFF] to-[#C7B8FF] text-white shadow-2xl p-8">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+                <p class="text-xs uppercase tracking-[0.35em] text-white/70">Cita programada</p>
+                <h1 class="text-3xl font-semibold">{{ cita.paciente.nombre }}</h1>
+                <p class="text-white/80 text-sm">
+                    {{ cita.paciente.especie }}{% if cita.paciente.raza %} · {{ cita.paciente.raza }}{% endif %} · Sexo {{ cita.paciente.sexo|default:"-" }}
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="rounded-2xl bg-white/15 px-4 py-3">
+                    <p class="text-xs uppercase text-white/70">Fecha</p>
+                    <p class="text-lg font-semibold">
+                        {% if cita.fecha_hora %}
+                            {{ cita.fecha_hora|date:"d/m/Y H:i" }}
+                        {% else %}
+                            {{ cita.fecha_solicitada|date:"d/m/Y" }} (sin horario)
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="rounded-2xl bg-white/15 px-4 py-3">
+                    <p class="text-xs uppercase text-white/70">Estado</p>
+                    <p class="text-lg font-semibold">{{ cita.get_estado_display }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Propietario/Veterinario -->
+    <section class="grid gap-6 md:grid-cols-2">
+        <article class="rounded-[24px] border border-[#E9E4FF] bg-white/95 shadow-md p-6">
+            <h2 class="text-lg font-semibold text-[#2E0E5C] mb-3">Propietario</h2>
+            {% if cita.paciente.propietario %}
+                {% with propietario=cita.paciente.propietario %}
+                <p class="text-xl font-semibold text-[#2E0E5C]">{{ propietario.user.get_full_name|default:propietario.user.username }}</p>
+                <p class="text-sm text-[#7C6F9B]">{{ propietario.telefono|default:"Sin telefono" }}</p>
+                <p class="text-sm text-[#7C6F9B] break-all">{{ propietario.user.email }}</p>
+                {% endwith %}
+            {% else %}
+                <p class="text-sm text-[#7C6F9B]">Sin propietario registrado.</p>
+            {% endif %}
+        </article>
+        <article class="rounded-[24px] border border-[#E9E4FF] bg-white/95 shadow-md p-6">
+            <h2 class="text-lg font-semibold text-[#2E0E5C] mb-3">Veterinario</h2>
+            {% if cita.veterinario %}
+                <p class="text-xl font-semibold text-[#2E0E5C]">{{ cita.veterinario.get_full_name|default:cita.veterinario.username }}</p>
+                <p class="text-sm text-[#7C6F9B]">Especialista asignado para esta cita.</p>
+            {% else %}
+                <p class="text-sm text-[#7C6F9B]">Aun no hay profesional asignado.</p>
+            {% endif %}
+        </article>
+    </section>
+
+    <!-- Medicamentos -->
+    {% with administraciones=cita.administraciones_farmacos.all %}
+    {% if administraciones %}
+    <section class="rounded-[24px] border border-[#E9E4FF] bg-white/95 shadow-md p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-[#2E0E5C]">Medicamentos administrados</h2>
+            <span class="text-sm text-[#7A3AFF] font-semibold">{{ administraciones|length }} registros</span>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2">
+            {% for registro in administraciones %}
+            <article class="rounded-2xl border border-[#F0E8FF] p-4">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="font-semibold text-[#2E0E5C]">{{ registro.farmaco.nombre }}</p>
+                        <p class="text-xs text-[#7C6F9B]">{{ registro.farmaco.get_categoria_display }}</p>
+                    </div>
+                    <span class="text-sm font-semibold text-[#7A3AFF]">{{ registro.cantidad }} ud.</span>
+                </div>
+                <p class="text-sm text-[#7C6F9B] mt-2">{{ registro.farmaco.descripcion|truncatewords:28 }}</p>
+                <div class="text-xs text-[#9A8CBC] mt-2">
+                    Stock actual en {{ registro.farmaco.sucursal.nombre }}: {{ registro.farmaco.stock }}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Informe clinico -->
+    {% if historial %}
+    <section class="rounded-[24px] border border-[#E9E4FF] bg-white/95 shadow-md p-6">
+        <h2 class="text-lg font-semibold text-[#2E0E5C] mb-4">Informe clinico</h2>
+        {% if not informe_directo %}
+            <div class="rounded-2xl border border-amber-200 bg-amber-50 text-amber-900 p-4 mb-4 text-sm">
+                Este informe pertenece al registro general de {{ cita.paciente.nombre }} del {{ historial.fecha|date:"d/m/Y H:i" }}.
+            </div>
+        {% endif %}
+        <div class="grid gap-4 md:grid-cols-2">
+            <div class="space-y-3 text-sm text-[#4F3E6A]">
+                <p><span class="text-xs font-semibold text-[#9A8CBC] uppercase block">Diagnostico</span>{{ historial.diagnostico }}</p>
+                <p><span class="text-xs font-semibold text-[#9A8CBC] uppercase block">Tratamiento</span>{{ historial.tratamiento }}</p>
+                <p><span class="text-xs font-semibold text-[#9A8CBC] uppercase block">Notas</span>{{ historial.notas|default:"-" }}</p>
+                <p><span class="text-xs font-semibold text-[#9A8CBC] uppercase block">Examenes</span>{{ historial.examenes|default:"-" }}</p>
+            </div>
+            <div class="space-y-3 text-sm text-[#4F3E6A]">
+                <p><span class="text-xs font-semibold text-[#9A8CBC] uppercase block">Peso</span>{{ historial.peso|default:"-" }} kg</p>
+                <p><span class="text-xs font-semibold text-[#9A8CBC] uppercase block">Temperatura</span>{{ historial.temperatura|default:"-" }} C</p>
+                <p><span class="text-xs font-semibold text-[#9A8CBC] uppercase block">Seguimiento</span>
+                    {% if historial.sin_proximo_control %}
+                        No requiere nuevo control.
+                    {% elif historial.proximo_control %}
+                        Proximo control: {{ historial.proximo_control|date:"d/m/Y" }}.
+                    {% else %}
+                        A definir.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        {% if historial.imagenes %}
+            <div class="mt-5 text-center">
+                <img src="{{ historial.imagenes.url }}" alt="Adjunto clinico" class="rounded-3 border shadow-sm max-w-full" style="max-width:480px;">
+                <div class="mt-3">
+                    <a href="{{ historial.imagenes.url }}" download class="btn btn-outline-primary rounded-full">
+                        <i class="bi bi-download me-2"></i>Descargar estudio
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+    {% else %}
+    <div class="rounded-[24px] border border-dashed border-[#E9E4FF] bg-white/70 p-6 text-center text-[#7C6F9B]">
+        Esta cita aun no posee un informe clinico registrado.
+    </div>
+    {% endif %}
+
+    <div class="flex justify-between items-center">
+        <a href="{% url 'mis_citas' %}" class="btn btn-outline-secondary rounded-full">
+            <i class="bi bi-arrow-left me-2"></i>Volver a mis citas
+        </a>
+        <a href="{% url 'detalle_mascota' cita.paciente.id %}" class="btn btn-primary rounded-full">
+            Ver ficha de {{ cita.paciente.nombre }}
+        </a>
+    </div>
+</div>
+{% endblock %}

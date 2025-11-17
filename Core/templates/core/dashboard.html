@@ -1,0 +1,850 @@
+{% extends "core/base.html" %}
+
+{% block title %}Panel - Sabueso Feliz{% endblock %}
+
+{% block extra_head %}
+    <style>
+        /* Custom styles for professional veterinary theme */
+        :root {
+            --primary: #164e63;
+            --primary-light: #0891b2;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --muted: #64748b;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .whatsapp-btn {
+            background: #25d366;
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-btn:hover {
+            background: #128c7e;
+            transform: scale(1.05);
+        }
+    </style>
+{% endblock %}
+
+{% block main_class %}max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10{% endblock %}
+
+{% block content %}
+        {% if request.user.rol == "ADMIN" %}
+            <!-- Modern admin dashboard with improved cards and statistics -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Panel de administracion</h2>
+                
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 card-hover border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Total Usuarios</p>
+                                <p class="text-3xl font-bold text-gray-900">{{ total_usuarios }}</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-users text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-6 card-hover border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Total Pacientes</p>
+                                <p class="text-3xl font-bold text-gray-900">{{ total_pacientes }}</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-dog text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-6 card-hover border-l-4 border-purple-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Total Citas</p>
+                                <p class="text-3xl font-bold text-gray-900">{{ total_citas }}</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-calendar-alt text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-6 card-hover border-l-4 border-orange-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Historiales</p>
+                                <p class="text-3xl font-bold text-gray-900">{{ total_historiales }}</p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-file-medical text-orange-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 card-hover border-l-4 border-teal-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Productos en tienda</p>
+                                <p class="text-3xl font-bold text-gray-900">{{ total_productos }}</p>
+                            </div>
+                            <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-store text-teal-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones Rapidas</h3>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="{% url 'crear_propietario_admin' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Crear Propietario
+                        </a>
+                        <a href="{% url 'crear_mascota_admin' %}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-paw mr-2"></i>
+                            Crear Mascota
+                        </a>
+                        <a href="{% url 'agendar_cita_admin' %}" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                            <i class="fas fa-calendar-plus mr-2"></i>
+                            Agendar Cita
+                        </a>
+                        <a href="{% url 'asignar_veterinario_citas' %}" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
+                            <i class="fas fa-user-md mr-2"></i>
+                            Asignar Veterinarios a Citas
+                        </a>
+                        <a href="{% url 'gestionar_veterinarios' %}" class="inline-flex items-center px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors">
+                            <i class="fas fa-user-clock mr-2"></i>
+                             Nuevos veterinarios
+                        </a>
+                        <a href="{% url 'dashboard_veterinarios' %}" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            Stats Veterinarios
+                        </a>
+                        <a href="{% url 'inventario_farmacos_admin' %}" class="inline-flex items-center px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors">
+                            <i class="fas fa-prescription-bottle-medical mr-2"></i>
+                            Inventario de Farmacos
+                        </a>
+                        <a href="{% url 'dashboard_admin_analisis' %}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            Analitica operativa
+                        </a>
+                        <a href="{% url 'admin_productos_list' %}" class="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
+                            <i class="fas fa-store mr-2"></i>
+                            Gestionar tienda
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Search Section -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-search mr-2 text-gray-600"></i>
+                        Buscar Propietarios
+                    </h3>
+                    <form method="get" action="{% url 'buscar_propietarios' %}" class="flex gap-3">
+                        <input type="text" name="q" placeholder="Nombre, telfono, email..." value="{{ request.GET.q }}" 
+                               class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-search mr-2"></i>
+                            Buscar
+                        </button>
+                    </form>
+                </div>
+
+
+                {% if productos_recientes %}
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-store text-teal-600"></i>
+                        ltimos productos cargados
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                        {% for producto in productos_recientes %}
+                            <div class="border border-gray-200 rounded-lg p-4 flex gap-4 hover:bg-gray-50 transition-colors">
+                                {% if producto.imagen %}
+                                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="w-20 h-20 rounded-lg object-cover">
+                                {% else %}
+                                    <div class="w-20 h-20 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="flex-1">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <h4 class="font-semibold text-gray-900">{{ producto.nombre }}</h4>
+                                        <span class="text-sm font-semibold text-teal-600">${{ producto.precio }}</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mb-2">{{ producto.get_categoria_display }}  {{ producto.actualizado|date:"d/m/Y H:i" }}</p>
+                                    <div class="flex items-center gap-2 text-sm">
+                                        {% if producto.disponible %}
+                                            <span class="status-badge bg-emerald-100 text-emerald-700">Activo</span>
+                                        {% else %}
+                                            <span class="status-badge bg-rose-100 text-rose-700">Oculto</span>
+                                        {% endif %}
+                                        <a href="{% url 'admin_producto_editar' producto.id %}" class="text-blue-600 hover:text-blue-800 font-medium">Editar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Appointments Section -->
+            
+
+                <!-- Patients Section -->
+               
+            </div>
+
+        {% elif request.user.rol == "VET" %}
+            <!-- Veterinarian dashboard -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Panel del Veterinario</h2>
+
+                {% if mi_sucursal %}
+                    <div class="mb-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-blue-100 bg-blue-50 p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white text-xl shadow-sm">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </span>
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">Sucursal asignada</p>
+                                    <p class="text-lg font-bold text-blue-900">{{ mi_sucursal.nombre }}</p>
+                                    {% if mi_sucursal.direccion %}
+                                        <p class="text-sm text-blue-700">
+                                            {{ mi_sucursal.direccion }}
+                                            {% if mi_sucursal.ciudad %}
+                                                <span class="text-blue-500">- {{ mi_sucursal.ciudad }}</span>
+                                            {% endif %}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if mi_sucursal.telefono %}
+                                <a href="tel:{{ mi_sucursal.telefono }}" class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm ring-1 ring-blue-100 hover:bg-blue-100 transition-colors">
+                                    <i class="fas fa-phone"></i>
+                                    {{ mi_sucursal.telefono }}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="mb-6">
+                        <div class="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-800">
+                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-amber-500 text-white shadow">
+                                <i class="fas fa-info"></i>
+                            </span>
+                            <div>
+                                <p class="text-sm font-semibold">Aun no tienes una sucursal asignada.</p>
+                                <p class="text-sm">Contacta al equipo administrativo para vincular tu perfil.</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="grid gap-8 xl:grid-cols-3">
+                    <div class="xl:col-span-2 space-y-6">
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Agenda asignada</h3>
+                                    <p class="text-sm text-gray-500">Turnos confirmados</p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-xs font-semibold rounded-full bg-blue-50 px-3 py-1 text-blue-700">
+                                        {{ mis_citas|length }} citas
+                                    </span>
+                                    <button type="button" data-filter-vet="all" class="filter-vet-btn inline-flex items-center rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-700 bg-gray-100">
+                                        Todas
+                                    </button>
+                                    <button type="button" data-filter-vet="pending" class="filter-vet-btn inline-flex items-center rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-500 hover:bg-gray-50">
+                                        Sin atender
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="space-y-4 max-h-[28rem] overflow-y-auto">
+                                {% for cita in mis_citas %}
+                                    <article class="border border-gray-200 rounded-2xl p-4 hover:border-blue-200 hover:bg-blue-50/50 transition" data-cita-card data-estado="{{ cita.estado }}">
+                                        <div class="flex flex-wrap items-start justify-between gap-3">
+                                            <div>
+                                                <p class="font-semibold text-gray-900">{{ cita.paciente.nombre }}</p>
+                                                <p class="text-xs text-gray-500">{{ cita.paciente.especie }}{% if cita.paciente.raza %} - {{ cita.paciente.raza }}{% endif %}</p>
+                                            </div>
+                                            <span class="px-3 py-1 text-xs font-semibold rounded-full {% if cita.estado == 'atendida' %}bg-emerald-100 text-emerald-800{% elif cita.estado == 'programada' %}bg-blue-100 text-blue-800{% else %}bg-gray-100 text-gray-600{% endif %}">
+                                                {{ cita.get_estado_display }}
+                                            </span>
+                                        </div>
+                                        <div class="mt-3 grid gap-2 text-sm text-gray-600">
+                                            <p><i class="fas fa-clock mr-2 text-gray-400"></i>
+                                                {% if cita.fecha_hora %}
+                                                    {{ cita.fecha_hora|date:"d/m/Y H:i" }} hs
+                                                {% else %}
+                                                    {{ cita.fecha_solicitada|date:"d/m/Y" }} (sin horario)
+                                                {% endif %}
+                                            </p>
+                                            <p><i class="fas fa-user mr-2 text-gray-400"></i>
+                                                {% if cita.paciente.propietario %}
+                                                    {{ cita.paciente.propietario.user.get_full_name }}
+                                                    {% if cita.paciente.propietario.telefono %}
+                                                        - {{ cita.paciente.propietario.telefono }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    Sin propietario registrado
+                                                {% endif %}
+                                            </p>
+                                            {% if cita.notas %}
+                                                <p class="text-xs text-gray-500"><i class="fas fa-sticky-note mr-2"></i>{{ cita.notas|truncatechars:100 }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mt-3 flex flex-wrap gap-2">
+                                            {% if cita.estado == "programada" %}
+                                                <a href="{% url 'atender_cita' cita.id %}" class="inline-flex items-center rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700">
+                                                    <i class="fas fa-stethoscope mr-1"></i> Atender
+                                                </a>
+                                            {% endif %}
+                                            <a href="{% url 'detalle_cita' cita.id %}" class="inline-flex items-center rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-100">
+                                                <i class="fas fa-eye mr-1"></i> Ver detalle
+                                            </a>
+                                            {% if cita.paciente.propietario and cita.paciente.propietario.telefono %}
+                                                {% with contacto=cita.paciente.propietario.telefono|default:"" %}
+                                                    {% if cita.fecha_hora %}
+                                                        {% with fecha_text=cita.fecha_hora|date:"d/m/Y H:i" %}
+                                                            {% with nombre_prop=cita.paciente.propietario.user.get_full_name|default:cita.paciente.propietario.user.username %}
+                                                                {% with wa_text="Hola "|add:nombre_prop|add:", te contacto desde Sabueso Feliz sobre la cita de "|add:cita.paciente.nombre|add:" el "|add:fecha_text %}
+                                                                    <a target="_blank" rel="noopener" href="https://wa.me/{{ contacto|urlencode }}?text={{ wa_text|urlencode }}" class="inline-flex items-center rounded-full border border-green-200 px-3 py-1 text-xs font-semibold text-green-700 hover:bg-green-50">
+                                                                        <i class="fab fa-whatsapp mr-1"></i> WhatsApp
+                                                                    </a>
+                                                                {% endwith %}
+                                                            {% endwith %}
+                                                        {% endwith %}
+                                                    {% else %}
+                                                        {% with fecha_text=cita.fecha_solicitada|date:"d/m/Y" %}
+                                                            {% with nombre_prop=cita.paciente.propietario.user.get_full_name|default:cita.paciente.propietario.user.username %}
+                                                                {% with wa_text="Hola "|add:nombre_prop|add:", te contacto desde Sabueso Feliz sobre la cita de "|add:cita.paciente.nombre|add:" el "|add:fecha_text %}
+                                                                    <a target="_blank" rel="noopener" href="https://wa.me/{{ contacto|urlencode }}?text={{ wa_text|urlencode }}" class="inline-flex items-center rounded-full border border-green-200 px-3 py-1 text-xs font-semibold text-green-700 hover:bg-green-50">
+                                                                        <i class="fab fa-whatsapp mr-1"></i> WhatsApp
+                                                                    </a>
+                                                                {% endwith %}
+                                                            {% endwith %}
+                                                        {% endwith %}
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% endif %}
+                                        </div>
+                                    </article>
+                                {% empty %}
+                                    <div class="text-center py-10 text-gray-500">
+                                        <i class="fas fa-calendar-times text-4xl mb-3"></i>
+                                        <p>No tienes citas asignadas por el momento.</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="rounded-2xl border border-[#E9E4FF] bg-white p-6 shadow-sm">
+                            <h3 class="text-lg font-semibold text-[#2E0E5C] mb-3">Resumen rapido</h3>
+                            {% with proxima=mis_citas|first %}
+                                {% if proxima %}
+                                    <div class="rounded-xl bg-[#F9F7FF] p-4 mb-4">
+                                        <p class="text-xs uppercase text-[#7C6F9B]">Proxima cita</p>
+                                        <p class="text-base font-semibold text-[#2E0E5C]">{{ proxima.paciente.nombre }}</p>
+                                        <p class="text-sm text-[#7C6F9B]">
+                                            {% if proxima.fecha_hora %}
+                                                {{ proxima.fecha_hora|date:"d/m/Y H:i" }} hs
+                                            {% else %}
+                                                {{ proxima.fecha_solicitada|date:"d/m/Y" }} (sin horario)
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="grid grid-cols-2 gap-3 text-sm text-[#4F3E6A]">
+                                <div class="rounded-xl border border-[#F0E8FF] px-4 py-3">
+                                    <p class="text-xs uppercase text-[#9A8CBC]">Citas activas</p>
+                                    <p class="text-2xl font-semibold text-[#2E0E5C]">{{ mis_citas|length }}</p>
+                                </div>
+                                <div class="rounded-xl border border-[#F0E8FF] px-4 py-3">
+                                    <p class="text-xs uppercase text-[#9A8CBC]">Informes cargados</p>
+                                    <p class="text-2xl font-semibold text-[#2E0E5C]">{{ mis_historiales|length }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl border border-[#E9E4FF] bg-white p-6 shadow-sm">
+                            <h3 class="text-lg font-semibold text-[#2E0E5C] mb-4">Acciones rapidas</h3>
+                            <div class="space-y-3">
+                                <a href="{% url 'mis_citas' %}" class="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                                    Revisar agenda
+                                    <i class="fas fa-arrow-right text-gray-400"></i>
+                                </a>
+                                <a href="{% url 'historial_medico_vet' %}" class="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                                    Historial clinico
+                                    <i class="fas fa-arrow-right text-gray-400"></i>
+                                </a>
+                                <a href="{% url 'inventario_farmacos_veterinario' %}" class="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                                    Inventario de farmacos
+                                    <i class="fas fa-arrow-right text-gray-400"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    (function() {
+                        const buttons = document.querySelectorAll('.filter-vet-btn');
+                        const cards = document.querySelectorAll('[data-cita-card]');
+                        if (!buttons.length || !cards.length) {
+                            return;
+                        }
+                        function applyFilter(filter) {
+                            cards.forEach(card => {
+                                const isAttended = card.dataset.estado === 'atendida';
+                                if (filter === 'pending' && isAttended) {
+                                    card.classList.add('hidden');
+                                } else {
+                                    card.classList.remove('hidden');
+                                }
+                            });
+                        }
+                        buttons.forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                buttons.forEach(b => b.classList.remove('bg-gray-100', 'text-gray-700'));
+                                buttons.forEach(b => b.classList.add('text-gray-500'));
+                                btn.classList.add('bg-gray-100', 'text-gray-700');
+                                applyFilter(btn.dataset.filterVet);
+                            });
+                        });
+                    })();
+                </script>
+        {% elif request.user.rol == "OWNER" %}
+            {% if propietario_incompleto %}
+                <div class="rounded-3xl border border-amber-200 bg-amber-50 p-8 text-amber-900 shadow-sm">
+                    <h2 class="text-2xl font-semibold">Tus datos an no estn registrados</h2>
+                    <p class="mt-3 max-w-2xl text-sm">
+                        Para habilitar todas las funciones del panel necesitamos que el equipo administrativo complete tu ficha de propietario. Comunicate con recepcin para confirmar tus datos o espera a que la clnica finalice el registro.
+                    </p>
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <a href="{% url 'landing' %}" class="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-700">
+                            <i class="fas fa-home"></i>
+                            Volver al inicio
+                        </a>
+                        <a href="mailto:administracion@sabuesofeliz.com" class="inline-flex items-center gap-2 rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100">
+                            <i class="fas fa-envelope"></i>
+                            Contactar administracin
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+            <div class="space-y-10">
+                <section class="relative overflow-hidden rounded-3xl text-white shadow-xl" style="background: linear-gradient(120deg, #7A3AFF, #8D4DFF 60%, #C7B8FF);">
+                    <div class="absolute inset-0 opacity-45" style="background-image: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35) 0, transparent 55%), radial-gradient(circle at 80% 0%, rgba(255,255,255,0.2) 0, transparent 45%);"></div>
+                    <div class="relative z-10 px-6 py-10 sm:px-10">
+                        <div class="grid gap-10 items-center lg:grid-cols-[minmax(0,1fr),minmax(0,320px)]">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/80">Tu espacio</p>
+                                <h2 class="mt-3 text-3xl font-bold sm:text-4xl">Hola, {{ request.user.get_full_name|default:request.user.username }}</h2>
+                                <p class="mt-4 text-sm sm:text-base text-white/80">
+                                    Centraliza la salud de tus mascotas, programa turnos y revisa informes clinicos con una experiencia ordenada y luminosa.
+                                </p>
+                                <div class="mt-6 flex flex-wrap gap-3">
+                                    <a href="{% url 'calendario_vacunas' %}" class="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-[#4A1B8C] shadow hover:bg-white">
+                                        <i class="fas fa-syringe"></i>
+                                        Calendario de vacunas
+                                    </a>
+                                    <a href="{% url 'registrar_mascota' %}" class="inline-flex items-center gap-2 rounded-full border border-white/60 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10">
+                                        <i class="fas fa-paw"></i>
+                                        Registrar mascota
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="rounded-2xl bg-white/15 p-6 shadow-lg backdrop-blur-md">
+                                {% if proxima_cita %}
+                                    <p class="text-xs font-semibold uppercase tracking-widest text-white/70">Proxima cita</p>
+                                    <h3 class="mt-3 text-2xl font-bold">{{ proxima_cita.paciente.nombre }}</h3>
+                                    <p class="mt-2 text-sm text-white/80 flex items-center gap-2">
+                                        <i class="fas fa-clock"></i>
+                                        {{ proxima_cita.fecha_hora|date:"d \d\e F, H:i" }} hs
+                                    </p>
+                                    <p class="mt-1 text-sm text-white/80 flex items-center gap-2">
+                                        <i class="fas fa-user-md"></i>
+                                        {% if proxima_cita.veterinario %}
+                                            {{ proxima_cita.veterinario.get_full_name|default:proxima_cita.veterinario.username }}
+                                        {% else %}
+                                            A confirmar por la clinica
+                                        {% endif %}
+                                    </p>
+                                    <div class="mt-5 flex flex-wrap gap-2">
+                                        <a href="{% url 'detalle_cita' proxima_cita.id %}" class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-semibold text-[#4A1B8C] shadow transition hover:bg-white/95">
+                                            <i class="fas fa-eye"></i>
+                                            Ver detalle
+                                        </a>
+                                        <a href="{% url 'detalle_mascota' proxima_cita.paciente.id %}" class="inline-flex items-center gap-2 rounded-full border border-white/40 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/10">
+                                            <i class="fas fa-notes-medical"></i>
+                                            Historia clnica
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <p class="text-xs font-semibold uppercase tracking-widest text-white/70">Sin turnos proximos</p>
+                                    <h3 class="mt-3 text-2xl font-bold">Agenda el proximo control</h3>
+                                    <p class="mt-2 text-sm text-white/80">Asegura el bienestar de tus companeros reservando una nueva visita.</p>
+                                    <a href="{% url 'agendar_cita' %}" class="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#4A1B8C] shadow-md transition-transform hover:-translate-y-0.5">
+                                        <i class="fas fa-calendar-check"></i>
+                                        Reservar cita
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                </section>
+
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    <div class="rounded-2xl bg-white p-6 shadow-sm">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Mis mascotas</h3>
+                                <p class="text-sm text-gray-500">Acced al perfil completo de cada paciente</p>
+                            </div>
+                            <a href="{% url 'registrar_mascota' %}" class="inline-flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600 hover:bg-emerald-100">
+                                <i class="fas fa-plus"></i>
+                                Nueva mascota
+                            </a>
+                        </div>
+                        <div class="mt-5 space-y-4">
+                            {% for mascota in mis_mascotas %}
+                                <a href="{% url 'detalle_mascota' mascota.id %}" class="group flex items-center gap-4 rounded-xl border border-gray-200 p-4 transition-all hover:border-cyan-200 hover:bg-cyan-50/40">
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-100 text-lg font-semibold text-cyan-900">
+                                        {{ mascota.nombre|slice:":1"|upper }}
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-gray-900">{{ mascota.nombre }}</p>
+                                        <p class="text-sm text-gray-500">{{ mascota.especie }}{% if mascota.raza %}  {{ mascota.raza }}{% endif %}</p>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-gray-300 transition-transform group-hover:translate-x-1"></i>
+                                </a>
+                            {% empty %}
+                                <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-gray-500">
+                                    <i class="fas fa-paw text-3xl"></i>
+                                    <p class="mt-3 text-sm">An no registraste mascotas.</p>
+                                    <a href="{% url 'registrar_mascota' %}" class="mt-4 inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-cyan-700">
+                                        <i class="fas fa-plus"></i>
+                                        Registrar primera mascota
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-white p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Prximas citas</h3>
+                            <a href="{% url 'agendar_cita' %}" class="text-sm font-semibold text-cyan-700 hover:text-cyan-900">Nueva cita</a>
+                        </div>
+                        <p class="mt-1 text-sm text-gray-500">Seguimiento en tiempo real de tus turnos</p>
+                        <div class="mt-5 space-y-5">
+                            {% for cita in citas_proximas %}
+                                <div class="flex gap-4">
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-lg font-bold text-cyan-700">{{ cita.fecha_hora|date:"d" }}</span>
+                                        <span class="text-xs uppercase tracking-wide text-gray-400">{{ cita.fecha_hora|date:"M" }}</span>
+                                    </div>
+                                    <div class="flex-1 rounded-xl border border-cyan-100 bg-cyan-50/60 p-4">
+                                        <div class="flex items-center justify-between">
+                                            <p class="font-semibold text-gray-900">{{ cita.paciente.nombre }}</p>
+                                            <span class="status-badge bg-white text-cyan-700">{{ cita.get_estado_display }}</span>
+                                        </div>
+                                        <p class="mt-1 text-sm text-gray-600 flex items-center gap-2">
+                                            <i class="fas fa-clock"></i>
+                                            {{ cita.fecha_hora|date:"d/m/Y H:i" }} hs
+                                        </p>
+                                        <p class="mt-1 text-sm text-gray-600 flex items-center gap-2">
+                                            <i class="fas fa-user-md"></i>
+                                            {% if cita.veterinario %}
+                                                {{ cita.veterinario.get_full_name|default:cita.veterinario.username }}
+                                            {% else %}
+                                                Sin veterinario asignado an
+                                            {% endif %}
+                                        </p>
+                                        <div class="mt-3 flex flex-wrap gap-2">
+                                            <a href="{% url 'detalle_cita' cita.id %}" class="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-1 text-xs font-semibold text-cyan-800 shadow hover:bg-white/90">
+                                                <i class="fas fa-eye"></i>
+                                                Ver detalle
+                                            </a>
+                                            <a href="{% url 'detalle_mascota' cita.paciente.id %}" class="inline-flex items-center gap-2 rounded-lg border border-cyan-200 px-3 py-1 text-xs font-semibold text-cyan-700 hover:bg-cyan-100">
+                                                <i class="fas fa-notes-medical"></i>
+                                                Historia
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-gray-500">
+                                    <i class="fas fa-calendar text-3xl"></i>
+                                    <p class="mt-3 text-sm">No tens citas en agenda.</p>
+                                    <a href="{% url 'agendar_cita' %}" class="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700">
+                                        <i class="fas fa-calendar-plus"></i>
+                                        Reservar turno
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-white p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-900">ltimos informes mdicos</h3>
+                        <p class="mt-1 text-sm text-gray-500">Repas diagnsticos y recomendaciones recientes</p>
+                        <div class="mt-5 space-y-4">
+                            {% for historial in historiales_recientes %}
+                                <div class="rounded-xl border border-gray-200 p-4">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-semibold text-gray-900">{{ historial.paciente.nombre }}</p>
+                                        <span class="text-xs font-semibold text-purple-600">{{ historial.fecha|date:"d/m" }}</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-600">{{ historial.diagnostico|truncatechars:80 }}</p>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <a href="{% url 'detalle_mascota' historial.paciente.id %}" class="inline-flex items-center gap-2 rounded-lg bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 hover:bg-purple-100">
+                                            <i class="fas fa-notes-medical"></i>
+                                            Ver historia
+                                        </a>
+                                        <a href="{% url 'mis_citas' %}#historial-{{ historial.id }}" class="inline-flex items-center gap-2 rounded-lg border border-purple-200 px-3 py-1 text-xs font-semibold text-purple-700 hover:bg-purple-100">
+                                            <i class="fas fa-folder-open"></i>
+                                            Seguimiento
+                                        </a>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-gray-500">
+                                    <i class="fas fa-file-medical text-3xl"></i>
+                                    <p class="mt-3 text-sm">Cuando tengas atenciones vers aqu los informes.</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl bg-white p-6 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Actividad reciente</h3>
+                            <p class="text-sm text-gray-500">ltimas citas atendidas y actualizaciones</p>
+                        </div>
+                        <a href="{% url 'mis_citas' %}" class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-list"></i>
+                            Ver todo el historial
+                        </a>
+                    </div>
+                    <div class="mt-5 space-y-4">
+                        {% for cita in citas_recientes %}
+                            <div class="flex flex-col gap-3 rounded-xl border border-gray-200 p-4 transition-colors hover:border-cyan-200 hover:bg-cyan-50/50">
+                                <div class="flex flex-wrap items-center justify-between gap-3">
+                                    <div>
+                                        <p class="font-semibold text-gray-900">{{ cita.paciente.nombre }}</p>
+                                        <p class="text-sm text-gray-500">
+                                            {% if cita.fecha_hora %}
+                                                {{ cita.fecha_hora|date:"d/m/Y H:i" }} hs
+                                            {% else %}
+                                                {{ cita.fecha_solicitada|date:"d/m/Y" }}  Horario pendiente
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <span class="status-badge {% if cita.estado == 'atendida' %}bg-emerald-100 text-emerald-700{% elif cita.estado == 'cancelada' %}bg-rose-100 text-rose-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                                        {{ cita.get_estado_display }}
+                                    </span>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                                    <span class="inline-flex items-center gap-2">
+                                        <i class="fas fa-user-md text-gray-400"></i>
+                                        {% if cita.veterinario %}
+                                            {{ cita.veterinario.get_full_name|default:cita.veterinario.username }}
+                                        {% else %}
+                                            Veterinario por asignar
+                                        {% endif %}
+                                    </span>
+                                    <span class="inline-flex items-center gap-2">
+                                        <i class="fas fa-paw text-gray-400"></i>
+                                        {{ cita.paciente.especie }}
+                                    </span>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="{% url 'detalle_cita' cita.id %}" class="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-1 text-xs font-semibold text-cyan-800 shadow hover:bg-white/90">
+                                        <i class="fas fa-eye"></i>
+                                        Detalles de la cita
+                                    </a>
+                                    {% if cita.estado == 'atendida' %}
+                                        <a href="{% url 'detalle_mascota' cita.paciente.id %}" class="inline-flex items-center gap-2 rounded-lg border border-cyan-200 px-3 py-1 text-xs font-semibold text-cyan-700 hover:bg-cyan-100">
+                                            <i class="fas fa-file-medical"></i>
+                                            Informe mdico
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-gray-500">
+                                <i class="fas fa-clipboard-list text-3xl"></i>
+                                <p class="mt-3 text-sm">Las citas atendidas aparecern aqu para un acceso rpido.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if productos_sugeridos %}
+                <div class="rounded-2xl bg-white p-6 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Recomendados para tus mascotas</h3>
+                            <p class="text-sm text-gray-500">Productos seleccionados por el equipo de Sabueso Feliz</p>
+                        </div>
+                        <a href="{% url 'tienda' %}" class="inline-flex items-center gap-2 rounded-lg border border-cyan-200 px-3 py-1 text-xs font-semibold text-cyan-700 hover:bg-cyan-50">
+                            <i class="fas fa-store"></i>
+                            Ver tienda completa
+                        </a>
+                    </div>
+                    <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {% for producto in productos_sugeridos %}
+                            <a href="{% url 'detalle_producto' producto.id %}" class="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
+                                <div class="relative h-40 w-full bg-gray-100">
+                                    {% if producto.imagen %}
+                                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="h-full w-full object-cover">
+                                    {% else %}
+                                        <div class="flex h-full w-full items-center justify-center text-4xl text-gray-300">
+                                            <i class="fas fa-bone"></i>
+                                        </div>
+                                    {% endif %}
+                                    <span class="absolute left-4 top-4 inline-flex items-center gap-1 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-cyan-700 shadow">{{ producto.get_categoria_display }}</span>
+                                </div>
+                                <div class="flex flex-1 flex-col gap-3 p-5">
+                                    <div>
+                                        <h4 class="text-base font-semibold text-gray-900 group-hover:text-cyan-700">{{ producto.nombre }}</h4>
+                                        <p class="mt-1 text-sm text-gray-500">{{ producto.descripcion|truncatechars:80 }}</p>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-lg font-bold text-cyan-800">${{ producto.precio }}</span>
+                                        <span class="text-xs font-semibold text-emerald-600">
+                                            {% if producto.disponible %}Disponible{% else %}Consultar{% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% elif request.user.rol == "ADMIN_OP" %}
+            <!-- Admin operator dashboard with modern design -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Panel de Operaciones</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- All Appointments -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                            <i class="fas fa-calendar-check mr-2 text-blue-600"></i>
+                            Todas las Citas
+                        </h3>
+                        <div class="space-y-4 max-h-96 overflow-y-auto">
+                            {% for cita in todas_citas %}
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <i class="fas fa-paw text-green-600"></i>
+                                        <span class="font-semibold text-gray-900">{{ cita.paciente.nombre }}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-1">
+                                        <i class="fas fa-user-md mr-1"></i>
+                                        {% if cita.veterinario %}
+                                            {{ cita.veterinario.username }}
+                                        {% else %}
+                                            Sin asignar
+                                        {% endif %}
+                                    </p>
+                                    <p class="text-sm text-gray-600">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        {% if cita.fecha_hora %}
+                                            {{ cita.fecha_hora|date:"M. d, Y, g:i a" }}
+                                        {% else %}
+                                            {{ cita.fecha_solicitada|date:"d/m/Y" }}  Sin horario
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            {% empty %}
+                                <div class="text-center py-8 text-gray-500">
+                                    <i class="fas fa-calendar-times text-4xl mb-3"></i>
+                                    <p>No hay citas registradas</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- All Patients -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                            <i class="fas fa-dog mr-2 text-green-600"></i>
+                            Todos los Pacientes
+                        </h3>
+                        <div class="space-y-4 max-h-96 overflow-y-auto">
+                            {% for paciente in todos_pacientes %}
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <i class="fas fa-paw text-green-600"></i>
+                                        <span class="font-semibold text-gray-900">{{ paciente.nombre }}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600">
+                                        <i class="fas fa-user mr-1"></i>
+                                        {{ paciente.propietario.user.username }}
+                                    </p>
+                                </div>
+                            {% empty %}
+                                <div class="text-center py-8 text-gray-500">
+                                    <i class="fas fa-paw text-4xl mb-3"></i>
+                                    <p>No hay pacientes registrados</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Modern logout button with better styling -->
+        <div class="mt-8 text-center">
+            <a href="{% url 'logout' %}" class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Cerrar Sesion
+            </a>
+        </div>
+{% endblock %}
+
+{% block extra_scripts %}{% endblock %}
+

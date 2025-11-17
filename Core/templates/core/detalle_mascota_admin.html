@@ -1,0 +1,138 @@
+{% extends "core/base.html" %}
+
+{% block title %}Ficha administrativa - {{ paciente.nombre }}{% endblock %}
+
+{% block main_class %}px-4 sm:px-6 lg:px-8 py-16{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+    <!-- Hero paciente -->
+    <section class="rounded-[32px] bg-gradient-to-br from-[#7A3AFF] via-[#8D4DFF] to-[#C7B8FF] text-white shadow-2xl p-8">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex items-center gap-4">
+                <div class="h-20 w-20 rounded-3xl overflow-hidden bg-white/20 flex items-center justify-center text-3xl font-semibold shadow">
+                    {% if paciente.foto %}
+                        <img src="{{ paciente.foto.url }}" alt="{{ paciente.nombre }}" class="w-full h-full object-cover">
+                    {% else %}
+                        {{ paciente.nombre|slice:":1"|upper }}
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="text-xs uppercase tracking-[0.35em] text-white/70">Paciente</p>
+                    <h1 class="text-3xl font-semibold">{{ paciente.nombre }}</h1>
+                    <p class="text-sm text-white/80">
+                        {{ paciente.especie }}{% if paciente.raza %}  {{ paciente.raza }}{% endif %}  Sexo {{ paciente.sexo|default:"-" }}
+                    </p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                {% if proxima_cita %}
+                <div class="rounded-2xl bg-white/15 px-5 py-4">
+                    <p class="text-xs uppercase text-white/70">Proxima cita</p>
+                    <p class="text-lg font-semibold">
+                        {% if proxima_cita.fecha_hora %}
+                            {{ proxima_cita.fecha_hora|date:"d/m/Y H:i" }}
+                        {% else %}
+                            {{ proxima_cita.fecha_solicitada|date:"d/m/Y" }} (sin horario)
+                        {% endif %}
+                    </p>
+                </div>
+                {% endif %}
+                {% if ultima_consulta %}
+                <div class="rounded-2xl bg-white/15 px-5 py-4">
+                    <p class="text-xs uppercase text-white/70">Ultimo informe</p>
+                    <p class="text-lg font-semibold">{{ ultima_consulta.fecha|date:"d/m/Y" }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Propietario + info general -->
+    <section class="grid gap-6 lg:grid-cols-3">
+        <article class="rounded-[24px] border border-[#E9E4FF] bg-white/95 shadow-md p-6 lg:col-span-1">
+            <h2 class="text-lg font-semibold text-[#2E0E5C] mb-4">Propietario</h2>
+            {% if paciente.propietario %}
+                <p class="text-xl font-semibold text-[#2E0E5C]">{{ paciente.propietario.user.get_full_name|default:paciente.propietario.user.username }}</p>
+                <p class="text-sm text-[#7C6F9B]">{{ paciente.propietario.telefono|default:"-" }}</p>
+                <p class="text-sm text-[#7C6F9B] break-all">{{ paciente.propietario.user.email }}</p>
+            {% else %}
+                <p class="text-sm text-[#7C6F9B]">Sin propietario registrado.</p>
+            {% endif %}
+        </article>
+        <article class="rounded-[24px] border border-[#E9E4FF] bg-white/95 shadow-md p-6 lg:col-span-2">
+            <h2 class="text-lg font-semibold text-[#2E0E5C] mb-4">Informacion general</h2>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl border border-[#F0E8FF] px-4 py-3 text-sm text-[#4F3E6A] flex justify-between">
+                    <span>Especie</span><span class="font-semibold">{{ paciente.especie }}</span>
+                </div>
+                <div class="rounded-2xl border border-[#F0E8FF] px-4 py-3 text-sm text-[#4F3E6A] flex justify-between">
+                    <span>Raza</span><span class="font-semibold">{{ paciente.raza|default:"-" }}</span>
+                </div>
+                <div class="rounded-2xl border border-[#F0E8FF] px-4 py-3 text-sm text-[#4F3E6A] flex justify-between">
+                    <span>Sexo</span><span class="font-semibold">{{ paciente.sexo|default:"-" }}</span>
+                </div>
+                <div class="rounded-2xl border border-[#F0E8FF] px-4 py-3 text-sm text-[#4F3E6A] flex justify-between">
+                    <span>Nacimiento</span><span class="font-semibold">{{ paciente.fecha_nacimiento|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <!-- Citas -->
+    <section class="rounded-[24px] border border-[#E9E4FF] bg-white/95 shadow-md p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-[#2E0E5C]">Citas registradas</h2>
+            <span class="text-sm text-[#7A3AFF] font-semibold">{{ citas|length }}</span>
+        </div>
+        <div class="space-y-3">
+            {% for cita in citas %}
+                <div class="rounded-2xl border border-[#F0E8FF] px-4 py-3 flex flex-wrap justify-between gap-3">
+                    <div>
+                        <p class="font-semibold text-[#2E0E5C]">
+                            {% if cita.fecha_hora %}
+                                {{ cita.fecha_hora|date:"d/m/Y H:i" }}
+                            {% else %}
+                                {{ cita.fecha_solicitada|date:"d/m/Y" }} (sin horario)
+                            {% endif %}
+                        </p>
+                        <p class="text-xs text-[#7C6F9B]">Estado: {{ cita.get_estado_display }}</p>
+                        <p class="text-xs text-[#7C6F9B]">Veterinario: {{ cita.veterinario|default:"Sin asignar" }}</p>
+                    </div>
+                    {% if cita.estado == "atendida" %}
+                        {% if cita.historial_relacionado %}
+                            <a href="{% url 'detalle_historial' cita.historial_relacionado.id %}" class="text-xs font-semibold text-[#7A3AFF]">Ver informe</a>
+                        {% else %}
+                            <a href="{% url 'detalle_cita' cita.id %}" class="text-xs font-semibold text-[#7A3AFF]">Ver detalle</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="text-sm text-[#7C6F9B]">Aun no hay citas registradas para este paciente.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Historial medico -->
+    <section class="rounded-[24px] border border-[#E9E4FF] bg-white/95 shadow-md p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-[#2E0E5C]">Historial medico</h2>
+            <span class="text-sm text-[#7A3AFF] font-semibold">{{ historiales|length }}</span>
+        </div>
+        <div class="space-y-3">
+            {% for hist in historiales %}
+                <div class="rounded-2xl border border-[#F0E8FF] px-4 py-3">
+                    <p class="font-semibold text-[#2E0E5C]">{{ hist.fecha|date:"d/m/Y" }}</p>
+                    <p class="text-sm text-[#4F3E6A]">Diagnostico: {{ hist.diagnostico|default:"Sin dato" }}</p>
+                    <p class="text-sm text-[#4F3E6A]">Tratamiento: {{ hist.tratamiento|default:"Sin dato" }}</p>
+                    {% if hist.notas %}
+                        <p class="text-sm text-[#7C6F9B]">Notas: {{ hist.notas }}</p>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="text-sm text-[#7C6F9B]">No hay historial medico registrado.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

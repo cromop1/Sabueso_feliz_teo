@@ -1,0 +1,95 @@
+{% extends 'core/base.html' %}
+{% block title %}Tienda - Veterinaria Sabueso Feliz{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <section class="rounded-[32px] bg-gradient-to-r from-[#7A3AFF] via-[#8D4DFF] to-[#C7B8FF] text-white shadow-xl p-8">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+                <p class="text-xs uppercase tracking-[0.35em] text-white/70">Boutique Sabueso Feliz</p>
+                <h1 class="text-3xl font-semibold">Tienda online</h1>
+                <p class="text-white/80 text-sm mt-2">Productos curados por nuestro equipo clnico para elevar el bienestar diario.</p>
+            </div>
+            <form method="get" class="flex flex-col sm:flex-row gap-3 items-stretch w-full lg:max-w-lg">
+                {% if categoria_activa %}
+                    <input type="hidden" name="categoria" value="{{ categoria_activa }}">
+                {% endif %}
+                <div class="relative flex-1">
+                    <span class="absolute inset-y-0 left-3 flex items-center text-[#7A3AFF]">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="search" name="q" value="{{ busqueda }}" class="w-full rounded-2xl border-0 px-10 py-3 text-sm text-[#2E0E5C] placeholder-[#8C80A9] focus:ring-2 focus:ring-white/70" placeholder="Buscar productos, categoras...">
+                </div>
+                <button class="rounded-2xl bg-white/90 text-[#4A1B8C] font-semibold px-6 py-3 text-sm hover:bg-white transition shadow">
+                    Buscar
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <section class="flex flex-wrap gap-2">
+        <a href="{% url 'tienda' %}"
+           class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition
+           {% if not categoria_activa %}bg-[#7A3AFF] text-white shadow{% else %}border border-[#DAD1FF] text-[#4A1B8C] hover:bg-[#F3EEFF]{% endif %}">
+            Todos
+        </a>
+        {% for key, label in categorias %}
+            <a href="{% url 'tienda' %}?categoria={{ key }}{% if busqueda %}&q={{ busqueda|urlencode }}{% endif %}"
+               class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition
+               {% if categoria_activa == key %}bg-[#7A3AFF] text-white shadow{% else %}border border-[#DAD1FF] text-[#4A1B8C] hover:bg-[#F3EEFF]{% endif %}">
+                {{ label }}
+            </a>
+        {% endfor %}
+    </section>
+
+    {% if productos %}
+        <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {% for producto in productos %}
+                <article class="rounded-3xl border border-[#E9E4FF] bg-white shadow-sm hover:shadow-xl transition flex flex-col">
+                    <div class="rounded-3xl overflow-hidden relative bg-[#F4F0FF]">
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="w-full h-52 object-cover">
+                        {% else %}
+                            <div class="flex h-52 items-center justify-center text-4xl text-[#B5A3F6]">
+                                <i class="bi bi-bag-heart"></i>
+                            </div>
+                        {% endif %}
+                        <span class="absolute top-4 right-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#7A3AFF] shadow">{{ producto.get_categoria_display }}</span>
+                    </div>
+                    <div class="p-5 flex flex-col gap-3 flex-1">
+                        <h3 class="text-lg font-semibold text-[#2E0E5C]">{{ producto.nombre }}</h3>
+                        <p class="text-sm text-[#6A5E85] flex-1">{{ producto.descripcion|truncatewords:25 }}</p>
+                        <div class="flex items-center justify-between">
+                            <p class="text-2xl font-bold text-[#7A3AFF]">${{ producto.precio }}</p>
+                            <div class="flex gap-2">
+                                <a href="{% url 'detalle_producto' producto.id %}" class="inline-flex items-center rounded-full border border-[#DAD1FF] px-3 py-1 text-xs font-semibold text-[#4A1B8C] hover:bg-[#F3EEFF]">
+                                    Ver detalle
+                                </a>
+                                {% if producto.telefono_whatsapp %}
+                                    <a href="https://wa.me/{{ producto.telefono_whatsapp }}?text={{ producto.mensaje_whatsapp|urlencode }}"
+                                       target="_blank"
+                                       rel="noopener"
+                                       class="inline-flex items-center rounded-full bg-[#25D366] px-3 py-1 text-xs font-semibold text-white hover:bg-[#1FB35A]">
+                                        <i class="bi bi-whatsapp"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <section class="text-center py-16 border border-dashed border-[#E9E4FF] rounded-3xl bg-white/60">
+            <div class="mb-4 text-[#B5A3F6] text-5xl">
+                <i class="bi bi-emoji-neutral"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-[#2E0E5C] mb-2">No encontramos productos que coincidan con tu bsqueda.</h3>
+            <p class="text-sm text-[#6A5E85] mb-4">Ajusta los filtros o vuelve a la vista general para explorar todo el catlogo.</p>
+            <a href="{% url 'tienda' %}" class="inline-flex items-center gap-2 rounded-full bg-[#7A3AFF] px-5 py-2 text-sm font-semibold text-white shadow hover:bg-[#6A32E5]">
+                <i class="bi bi-arrow-counterclockwise"></i> Limpiar filtros
+            </a>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}
